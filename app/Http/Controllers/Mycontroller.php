@@ -118,8 +118,8 @@ class Mycontroller extends Controller
             'age'=>'required',
             'file'=>'nullable|mimes:jpeg,jpg,png|max:10000',
             'email'=>'required|email',
-            // 'password'=>'required'
-            'password' => ['required', Password::min(8)->mixedCase()]
+            'password'=>'required',
+            // 'password' => ['required', Password::min(8)->mixedCase()]
  
          ]);
  
