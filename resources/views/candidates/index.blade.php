@@ -33,7 +33,7 @@
         </div>
       </nav>
       <div class="container">
-        <a href="candidates/create" class="btn btn-dark mt-2">New Registration</a>
+        <a href="/create" class="btn btn-dark mt-2">New Registration</a>
       </div>
     
 <div>
@@ -61,9 +61,9 @@
               <td>{{ $loop->index+1 }}</td>   
               <td>{{ $candidate->name }}</td>
               <td>{{ $candidate->address }}</td>
-              <td>{{  $candidate->country }}</td>
-              <td>{{  $candidate->state }}</td>
-              <td>{{ $candidate->city }}</td>
+              <td>{{  $candidate->Countries_name }}</td>
+              <td>{{  $candidate->state_name }}</td>
+              <td>{{ $candidate->city_name }}</td>
               <td>{{ $candidate->gender }}</td>
               <td>{{ $candidate->number}}</td>
               <td>{{ $candidate->age }}</td>
@@ -71,12 +71,12 @@
                 <img src="images/{{ $candidate->file }}" class="" width="80" height="60" alt="Unable to load">
               </td>
               
-            
+              
                 
               <td>{{ $candidate->email }}</td>
               <td>{{ $candidate->password }}</td>
               <td>
-                <a href="candidates/{{ $candidate->id }}/edit" class="btn btn-dark btn-sm">Edit</a>
+                <a href="edit/{{ $candidate->id }}" class="btn btn-dark btn-sm">Edit</a>
                 <a href="candidates/{{ $candidate->id }}/delete" class="btn btn-danger btn-sm">Delete</a>
               </td>
             </tr>

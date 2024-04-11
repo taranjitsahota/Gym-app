@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Registration</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+ 
+  
 
 </head>
 <body>
@@ -32,7 +35,7 @@
           
       @endif
 
-    <form class="row p-4" method="POST" enctype="multipart/form-data" action="/candidates/store" >
+    <form id="user_form" class="row p-4" method="POST" enctype="multipart/form-data" action="/candidates/store" >
         @csrf
         <div class="col-md-6 ">
           <label for="name" class="form-label">Name</label>
@@ -51,7 +54,7 @@
 
         <div class="col-md-4 p-2">
           <label for="country" class="form-label">Country</label>
-          <select name="country" id="country-dd" class="form-select">
+          <select name="country" id="country_dd" class="form-select">
             
             <option value="{{ old('country') }}" selected disabled >Choose...</option>
 
@@ -83,7 +86,7 @@
 
         <div class="col-md-4 p-2">
             <label for="state" class="form-label">State</label>
-            <select name="state" id="state-dd" class="form-select">
+            <select name="state" id="state_dd" class="form-select">
               <option value="{{ old('state') }}" selected disabled >Choose...</option>
               {{-- <option>...</option> --}}
             </select>
@@ -93,8 +96,9 @@
           </div>
           <div class="col-md-4 p-2">
             <label for="city" class="form-label">City</label>
-            <select name="city" id="city-dd" class="form-select">
+            <select name="city" id="city_dd" class="form-control select2" multiple>
               <option value=""selected disabled >Choose...</option>
+              
               {{-- <option>...</option> --}}
             </select>
             @if($errors->has('city'))
@@ -104,8 +108,8 @@
           <label for="gender">Gender:</label>
           <div>
             <div class="form-check p-2">
-            <input class="form-check-input p-2" value="male"  type="radio" name="gender">
-            <label class="form-check-label" for="user_gender">
+            <input class="form-check-input p-2" id="user_gender" value="male"  type="radio" name="gender">
+            <label class="form-check-label"  for="user_gender">
               Male
             </label>
           </div>
@@ -164,11 +168,16 @@
       </form>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+
     <script>
         $(document).ready(function () {
-            $('#country-dd').on('change', function () {
+            $('#country_dd').on('change', function () {
                 var idCountry = this.value;
-                $("#state-dd").html('');
+                $("#state_dd").html('');
                 $.ajax({
                     url: "{{url('api/fetch-states')}}",
                     type: "POST",
@@ -178,18 +187,18 @@
                     },
                     dataType: 'json',
                     success: function (result) {
-                        $('#state-dd').html('<option value="">Select State</option>');
+                        $('#state_dd').html('<option value="">Select State</option>');
                         $.each(result.states, function (key, value) {
-                            $("#state-dd").append('<option value="' + value
+                            $("#state_dd").append('<option value="' + value
                                 .id + '">' + value.name + '</option>');
                         });
-                        $('#city-dd').html('<option value="">Select City</option>');
+                        $('#city_dd').html('<option value="">Select City</option>');
                     }
                 });
             });
-            $('#state-dd').on('change', function () {
+            $('#state_dd').on('change', function () {
                 var idState = this.value;
-                $("#city-dd").html('');
+                $("#city_dd").html('');
                 $.ajax({
                     url: "{{url('api/fetch-cities')}}",
                     type: "POST",
@@ -199,17 +208,116 @@
                     },
                     dataType: 'json',
                     success: function (res) {
-                        $('#city-dd').html('<option value="">Select City</option>');
+                        $('#city_dd').html('<option value="">Select City</option>');
                         $.each(res.cities, function (key, value) {
-                            $("#city-dd").append('<option value="' + value
+                            $("#city_dd").append('<option value="' + value
                                 .id + '">' + value.name + '</option>');
                         });
                     }
                 });
             });
+            // $('#city_dd').select2();
+            // $('#city_dd').select2({
+            //    selectOnClose: true
+            // });
+            $('#city_dd').select2({
+            closeOnSelect: false
+              });
+              $('#user_form').on('submit',function(yo){
+                yo.preventDefault();
+                
+                $.ajax({
+                  type: "POST",
+                  url: "{{ url('candidates/store') }}",
+                  data: new FormData(this),
+                  dataType: 'json',
+                  processData:false,
+                  contentType:false,
+                  success: function(result) {
+              window.location = "{{ route('candidates.index') }}"
+          },error: function(data) {
+            console.log('error');
+          }
+                });
+              });
+
         });
     </script>
+   
+    <script>
+      $(document).ready(function() {
+          $('#user_form').validate({
+              rules: {
+                name: {
+                      required: true,
+                      minlength: 8
+                  },
+                  address: {
+                      required: true
+                  },
+                  country: {
+                      required: true
+                  },
+                  state: {
+                      required: true
+                  },
+                  // city: {
+                  //     required: true,
+                  //     digits: true 
+                  // },
+                  gender: {
+                      required: true
+                  },
+                  number: {
+                      required: true
+                  },
+                  age: {
+                      required: true
+                  },
+                  file: {
+                      required: true
+                  },
+                  email: {
+                      required: true
+                  },
+                  password: {
+                      required: true
+                  },
 
-    
+              },
+              messages: {
+                name : 'Required',
+                address: 'Required',
+                country : 'Required',
+                state : 'Required',
+                city: 'Required',
+                gender: 'Required',
+                number : 'Required',
+                age: 'Required',
+                file: 'Required',
+                email: 'Required',
+                password: 'Required'
+               
+
+              },
+              submitHandler: function(form) {
+                  form.submit();
+              }
+          });
+      });
+  </script>
+
+{{-- <script>
+  $(document).ready(function(){
+
+    $('#city_dd').select2();
+  });
+</script> --}}
+{{-- <script>
+  $(function(){
+    $('#city_dd').select2();
+  });
+</script> --}}
+
 </body>
 </html>

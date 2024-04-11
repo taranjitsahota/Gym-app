@@ -33,10 +33,11 @@
       @endif
 
       <h3 class="text-muted">Candidate Edit #{{ $candidate->name }}</h3>
-    <form class="container row p-4" method="POST" enctype="multipart/form-data" action="/candidates/{{ $candidate->id }}/update" >
+    <form class="container row p-4" method="post" enctype="multipart/form-data" action="/candidates/update/{{ $candidate->id }}" >
         @csrf
-        @method('PUT')
+        {{-- @method('PUT') --}}
         <div class="col-md-6 ">
+          <input type="hidden" name='id' value="{{ old('id',$candidate->id) }}">
           <label for="name" class="form-label">Name</label>
           <input type="text" value="{{ old('name',$candidate->name) }}" class="form-control" name="name" id="user_name" placeholder="Please Enter Your Name">
           @if($errors->has('name'))
@@ -170,7 +171,7 @@
           </div> --}}
         
         <div class="col-12 p-2">
-          <button type="submit" class="btn btn-dark mt-2">Update</button>
+          <button type="submit" class="btn btn-dark mt-2">Update</button> 
         </div>
       </form>
 
