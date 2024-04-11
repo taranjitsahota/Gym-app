@@ -54,7 +54,7 @@ class Candidate extends Model
             "address"=>$request->address,
             "country"=>$request->country,
             "state"=>$request->state,
-            "city"=>$request->city,
+            // "city"=>$request->city,
             "gender"=>$request->gender,
             "number"=>$request->number,
             "age"=>$request->age,
@@ -63,10 +63,27 @@ class Candidate extends Model
             "email"=>$request->email,
             "password"=>$request->password
         );
+        // dd($data);
+        $citydata=$request->input('city');
+        // dd($citydata);
+        foreach($citydata as $city){
+           $user1=[
+                'state' =>$request->state,
+                'city' =>$city
+           ];
+           print'<pre>';print_r($user1);
 
+            $users = DB::table('multiplecities')
+            ->insert($user1);
+        }
+        exit();
+        
+        // dd($citydata);
+        // $citydata=explode(',',$citydata);
         $data = DB::table('candidates')
         
         ->insert($data);
+        
 
         // $candidate = new candidate;
         // $candidate->name=$request->name;

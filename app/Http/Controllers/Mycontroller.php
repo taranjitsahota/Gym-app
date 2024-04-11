@@ -45,13 +45,13 @@ class Mycontroller extends Controller
     //     dd($data);
     // }
     public function store(Request $request){
-        
+        // dd($request->all());
         $request->validate([
            'name'=>'required',
            'address'=>'required',
            'country'=>'required',
            'state'=>'required',
-        //    'city'=>'required',
+           'city'=>'required',
            'gender'=>'required',
            'number'=>'required',
            'age'=>'required',

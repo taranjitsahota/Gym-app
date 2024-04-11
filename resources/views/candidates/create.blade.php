@@ -96,7 +96,7 @@
           </div>
           <div class="col-md-4 p-2">
             <label for="city" class="form-label">City</label>
-            <select name="city" id="city_dd" class="form-control select2" multiple>
+            <select name="city[]" id="city_dd" class="form-control select2" multiple>
               <option value=""selected disabled >Choose...</option>
               
               {{-- <option>...</option> --}}
@@ -261,10 +261,10 @@
                   state: {
                       required: true
                   },
-                  // city: {
-                  //     required: true,
-                  //     digits: true 
-                  // },
+                  city: {
+                      required: true,
+                      digits: true 
+                  },
                   gender: {
                       required: true
                   },
