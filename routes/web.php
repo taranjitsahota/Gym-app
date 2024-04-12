@@ -9,9 +9,9 @@ Route::get('/', function () {
 });
 Route::get('/',[Mycontroller::class,'index'])->name('candidates.index');
 Route::get('create',[Mycontroller::class,'create'])->name('candidates.create');
-Route::post('candidates/store',[Mycontroller::class,'store'])->name('candidates.store');
+Route::post('candidates/store',[Mycontroller::class,'store']);
 Route::get('edit/{id}',[Mycontroller::class,'edit']);
-Route::post('candidates/update/{id}',[Mycontroller::class,'update']);
+Route::post('candidates/update',[Mycontroller::class,'update']);
 Route::get('candidates/{id}/delete',[Mycontroller::class,'destroy']);
 Route::get('dependent-dropdown', [MyController::class, 'country']);
 Route::post('api/fetch-states', [MyController::class, 'fetchState']);

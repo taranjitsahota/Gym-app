@@ -31,11 +31,9 @@
           <div class="alert alert-success alert-block">
           <strong>{{ $message }}</strong>
             </div>    
-      
-          
       @endif
 
-    <form id="user_form" class="row p-4" method="POST" enctype="multipart/form-data" action="/candidates/store" >
+    <form id="user_form" class="row p-4" method="POST" enctype="multipart/form-data" action="candidate/store" >
         @csrf
         <div class="col-md-6 ">
           <label for="name" class="form-label">Name</label>
@@ -162,7 +160,7 @@
         
         <div class="col-12 p-2">
         
-        <button type="submit" class="btn btn-dark mt-2" >Sign in</button>
+        <button id="submit" name="submit" class="btn btn-dark mt-2" >Sign in</button>
   
         </div>
       </form>
@@ -300,9 +298,9 @@
                
 
               },
-              submitHandler: function(form) {
-                  form.submit();
-              }
+              // submitHandler: function(form) {
+              //     form.submit();
+              // }
           });
       });
   </script>

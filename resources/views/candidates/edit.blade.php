@@ -24,20 +24,20 @@
         </div>
       </nav>
     
-      @if ($message = Session::get('success'))
+      {{-- @if ($message = Session::get('success'))
           <div class="alert alert-success alert-block">
           <strong>{{ $message }}</strong>
             </div>    
       
           
-      @endif
+      @endif --}}
 
       <h3 class="text-muted">Candidate Edit #{{ $candidate->name }}</h3>
-    <form class="container row p-4" method="post" enctype="multipart/form-data" action="/candidates/update/{{ $candidate->id }}" >
+    <form id="user_form" class="container row p-4" method="POST" enctype="multipart/form-data" action="/candidates/update/{{ $candidate->id }}" >
         @csrf
         {{-- @method('PUT') --}}
         <div class="col-md-6 ">
-          <input type="hidden" name='id' value="{{ old('id',$candidate->id) }}">
+          <input type="hidden" name='id' value="{{$candidate->id }}">
           <label for="name" class="form-label">Name</label>
           <input type="text" value="{{ old('name',$candidate->name) }}" class="form-control" name="name" id="user_name" placeholder="Please Enter Your Name">
           @if($errors->has('name'))
@@ -94,7 +94,7 @@
           </div>
           <div class="col-md-4 p-2">
             <label for="city" class="form-label">City</label>
-            <select name="city" id="city-dd" class="form-select">
+            <select name="city[]" id="city_dd" class="form-control select2" multiple>
               <option value=""selected disabled >Choose...</option>
               {{-- <option>...</option> --}}
               @foreach ($cities as $city)
@@ -171,11 +171,15 @@
           </div> --}}
         
         <div class="col-12 p-2">
-          <button type="submit" class="btn btn-dark mt-2">Update</button> 
+          <button id="submit" class="btn btn-dark mt-2">Update</button> 
         </div>
       </form>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
       <script>
           $(document).ready(function () {
               $('#country-dd').on('change', function () {
@@ -195,13 +199,13 @@
                               $("#state-dd").append('<option value="' + value
                                   .id + '">' + value.name + '</option>');
                           });
-                          $('#city-dd').html('<option value="">Select City</option>');
+                          $('#city_dd').html('<option value="">Select City</option>');
                       }
                   });
               });
               $('#state-dd').on('change', function () {
                   var idState = this.value;
-                  $("#city-dd").html('');
+                  $("#city_dd").html('');
                   $.ajax({
                       url: "{{url('api/fetch-cities')}}",
                       type: "POST",
@@ -211,13 +215,35 @@
                       },
                       dataType: 'json',
                       success: function (res) {
-                          $('#city-dd').html('<option value="">Select City</option>');
+                          $('#city_dd').html('<option value="">Select City</option>');
                           $.each(res.cities, function (key, value) {
-                              $("#city-dd").append('<option value="' + value
+                              $("#city_dd").append('<option value="' + value
                                   .id + '">' + value.name + '</option>');
                           });
                       }
                   });
+              });
+              $('#city_dd').select2({
+            closeOnSelect: false
+              });
+              $('#user_form').on('submit',function(yo){
+                yo.preventDefault();
+                
+                $.ajax({
+                  type: "POST",
+                  url: "{{ url('candidates/update') }}",
+                  data: new FormData(this),
+                  dataType: 'json',
+                  processData:false,
+                  contentType:false,
+                  success: function(result) {
+                    console.log('yoyoyo');
+
+              // window.location = "{{ route('candidates.index') }}"
+          },error: function(data) {
+            window.location = "{{ route('candidates.index') }}"
+          }
+                });
               });
           });
       </script>

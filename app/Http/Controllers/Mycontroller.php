@@ -51,7 +51,7 @@ class Mycontroller extends Controller
            'address'=>'required',
            'country'=>'required',
            'state'=>'required',
-           'city'=>'required',
+        //    'city'=>'required',
            'gender'=>'required',
            'number'=>'required',
            'age'=>'required',
@@ -62,7 +62,9 @@ class Mycontroller extends Controller
 
         ]);
         $data['candidates']=Candidate::store($request);
-        return back()->withSuccess('Candidate registred!!');
+        // dd($data);
+        return back()->withSuccess($data);
+        
     }
         
         // $fileName = time().'.'.$request->file->extension();
@@ -109,7 +111,7 @@ class Mycontroller extends Controller
 
     }
  
-    public function update(Request $request,$id){
+    public function update(Request $request){
         
 
         // dd($request->all());
@@ -120,11 +122,11 @@ class Mycontroller extends Controller
             'address'=>'required',
             'country'=>'required',
             'state'=>'required',
-            'city'=>'required',
+            // 'city'=>'required',
             'gender'=>'required',
             'number'=>'required',
             'age'=>'required',
-            'file'=>'required|mimes:jpeg,jpg,png|max:10000',
+            // 'file'=>'required|mimes:jpeg,jpg,png|max:10000',
             'email'=>'required|email',
             // 'password'=>'required',
             // 'password' => ['required', Password::min(8)->mixedCase()]
@@ -137,7 +139,7 @@ class Mycontroller extends Controller
         //     $candidate->file=$fileName;
         //     }
         // dd($request->all());
-        $data['candidate']=Candidate::update1($request,$id);
+        $data=Candidate::update1($request);
             return back()->withSuccess('Candidate info updated!!');  
         //  dd($data['candidate']);
  

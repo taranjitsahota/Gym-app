@@ -13,11 +13,16 @@ class Candidate extends Model
     
     public static function index(){
         $users = DB::table('candidates')
-        ->select("candidates.*","countries.name as Countries_name","states.name as state_name","cities.name as city_name")
-        
-        ->join('countries','countries.id','=','candidates.country')
-        ->join('states','states.id','=','candidates.state')
-        ->join('cities','cities.id','=','candidates.city')
+        ->select("candidates.*",
+        "countries.name as Countries_name",
+        "states.name as state_name",
+        "cities.name as city_name"
+        )
+        // ->join('multiplecities','multiplecities.candidate_id','=','candidates.id')
+        ->leftJoin('countries','countries.id','=','candidates.country')
+        ->leftJoin('states','states.id','=','candidates.state')
+        // ->join('cities','cities.id','=','multiplecities.city')
+        ->leftJoin('cities','cities.id','=','candidates.city')
 
         // ->join('states','countries.id','=','states.country_id')
         // ->join('cities','states.id','=','cities.state_id')
@@ -25,6 +30,25 @@ class Candidate extends Model
         // ->select('candidates.*','states.name as states_name')
         ->whereNULL('is_deleted')
         ->get();
+// dd($users);
+        // $users = DB::table('candidates')
+        // ->select(
+        //     "candidates.*",
+        //     "countries.name as Countries_name",
+        //     "states.name as state_name",
+        //     "cities.name as city_name"
+        //     )
+        
+        // ->join('multiplecities','multiplecities.candidate_id','=','candidates.id')
+        // ->join('states','states.id','=','multiplecities.state')
+        // ->join('cities','cities.id','=','multiplecities.city')
+        // ->join('countries','countries.id','=','states.country_id')
+
+      
+
+        // // ->select('candidates.*','states.name as states_name')
+        // ->whereNULL('is_deleted')
+        // ->get();
         // dd($users);
         return $users;
         // return view('candidates.index');
@@ -63,26 +87,37 @@ class Candidate extends Model
             "email"=>$request->email,
             "password"=>$request->password
         );
+        $candidateID = DB::table('candidates')
+        
+        ->insertGetId($data);
+
         // dd($data);
         $citydata=$request->input('city');
         // dd($citydata);
         foreach($citydata as $city){
+
            $user1=[
+                'candidate_id' =>$candidateID,
                 'state' =>$request->state,
                 'city' =>$city
            ];
-           print'<pre>';print_r($user1);
+        // //    print'<pre>';print_r($user1);
 
             $users = DB::table('multiplecities')
             ->insert($user1);
         }
-        exit();
+        // exit();
         
         // dd($citydata);
         // $citydata=explode(',',$citydata);
-        $data = DB::table('candidates')
-        
-        ->insert($data);
+        // $data = DB::table('candidates')
+        // ->insert($data);
+        if($candidateID){
+            // dd(1);
+            return 'Candidate registred!!';
+        }else{
+            return 'Candidate not registred!!';
+        }
         
 
         // $candidate = new candidate;
@@ -106,7 +141,7 @@ class Candidate extends Model
         $users = DB::table('candidates')
         ->where('id',$id)
         ->first();
-
+    //    dd($id);
         return $users;
     }
     public static function allState(){
@@ -119,7 +154,7 @@ class Candidate extends Model
         ->get();
         return $users;
     }
-    public static function update1($request,$id){
+    public static function update1($request){
         // dd($request->id);
         // $id=id;
         // if($requestArray['file']==null){
@@ -135,26 +170,27 @@ class Candidate extends Model
         // unset($requestArray['_token']);
         // unset($requestArray['id']);
         // unset($requestArray['_method']);
+    
          if(isset($request->file)){
             $fileName = time().'.'.$request->file->extension();
             $request->file->move(public_path('images'),$fileName);
             
             }
        
-        $data=array(
+        $data=[
             
-            "id"=>$request->id,
+            // "id"=>$request->id,
             "name"=>$request->name,
             "address"=>$request->address,
             "country"=>$request->country,
             "state"=>$request->state,
-            "city"=>$request->city,
+            // "city"=>$request->city,
             "gender"=>$request->gender,
             "number"=>$request->number,
             "age"=>$request->age,
-            "file"=>$fileName,
+            // "file"=>$fileName,
             "email"=>$request->email
-        );
+        ];
         // dd($request->file);
         // $candidate=Candidate::where('id',$id)->first();
         // if(isset($request->file)){
@@ -165,13 +201,43 @@ class Candidate extends Model
         //     $candidate->save();
             
         
-         
-        $data = DB::table('candidates')
-        ->where('id',$id)
+        // dd($data);
+        // dd($request);
+        $data1 = DB::table('candidates')
+        ->where('candidates.id',$request->id)
         ->update($data);
+            // if ($data1) {
+            //     return response()->json(['success' => true]);
+            // } else {
+            //     return response()->json(['success' => false], 500);
+            // }
         
-       
         
+        
+        // $citydata=$request->input('city');
+        // foreach($citydata as $city){
+        //     $user1=[
+        //         'candidate_id' =>$data1,
+        //         'state' =>$request->state,
+        //         'city' =>$city
+        //    ];
+        //    $users = DB::table('multiplecities')
+        //    ->where('candidates.id',$request->id)
+        //     ->update($user1);
+        // }
+        $citydata=$request->input('city');
+        foreach($citydata as $city){
+            $user1=[
+                'candidate_id' =>$data1,
+                'state' =>$request->state,
+                'city' =>$city
+           ];
+           $users = DB::table('multiplecities')
+           ->delete($user1);
+           $users = DB::table('multiplecities')
+            ->insert($user1);
+        }
+        // dd($citydata);
      return 'done';
 
         //  if(isset($request->file)){
