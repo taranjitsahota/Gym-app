@@ -233,8 +233,12 @@ class Candidate extends Model
                 'city' =>$city
            ];
            $users = DB::table('multiplecities')
-           ->delete($user1);
+           ->join('candidates', 'multiplecities.candidate_id', '=', 'candidates.id')
+           ->where('candidates.id',$request->id)
+           ->delete();
+           dd($users);
            $users = DB::table('multiplecities')
+           ->where('candidates.id',$request->id)
             ->insert($user1);
         }
         // dd($citydata);
@@ -264,7 +268,26 @@ class Candidate extends Model
         // return $users;
 
 
-
+        // $citydata = $request->input('city');
+        // foreach ($citydata as $city) {
+        //     $user1 = [
+        //         'candidate_id' => $data1,
+        //         'state' => $request->state,
+        //         'city' => $city
+        //     ];
+        
+        //     // Assuming candidates table has an id column and it's related to multiplecities
+        //     $users = DB::table('multiplecities')
+        //         ->join('candidates', 'multiplecities.candidate_id', '=', 'candidates.id')
+        //         ->where('candidates.id', $request->id)
+        //         ->delete();
+        //     // This deletes the existing records associated with the candidate id
+        
+        //     // Now, insert the new records
+        //     $users = DB::table('multiplecities')
+        //         ->insert($user1);
+        // }
+        
 
 
         
